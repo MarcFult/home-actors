@@ -1,8 +1,38 @@
-# Default ignored files
+# === Gradle-specific ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# === Eclipse ===
+.project
+.classpath
+.settings/
+
+# === VS Code ===
+.vscode/
+
+# === OS & Editor Files ===
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# === Node (if applicable) ===
+node_modules/
+npm-debug.log*
+
+# === HTTP Client & Datasources (from your file) ===
 /shelf/
 /workspace.xml
-# Editor-based HTTP Client requests
 /httpRequests/
-# Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
