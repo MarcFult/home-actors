@@ -8,40 +8,52 @@ import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 
 public class Blinds extends AbstractBehavior<Blinds.BlindsCommand> {
+
     public interface BlindsCommand {}
 
     public static final class PowerBlinds implements BlindsCommand {
-        final Boolean value;
-        public PowerBlinds(Boolean value) {this.value = value;}
+        public final boolean value;
+
+        public PowerBlinds(boolean value) {
+            this.value = value;
+        }
     }
 
     public static final class BlindsStatus implements BlindsCommand {
-        Boolean value;
+        public final boolean value;
 
-        public BlindsStatus(Boolean value) {this.value = value;}
+        public BlindsStatus(boolean value) {
+            this.value = value;
+        }
     }
 
-    public Blinds(ActorContext<BlindsCommand> context) {
+    private boolean isOpen = false;
+
+    public static Behavior<BlindsCommand> create(String identifier) {
+        return Behaviors.setup(Blinds::new);
+    }
+
+    private Blinds(ActorContext<BlindsCommand> context) {
         super(context);
         getContext().getLog().info("Blinds started");
     }
 
-    public static Behavior<Blinds.BlindsCommand> create(String identifier) {
-        return Behaviors.setup(context -> new Blinds(context));
-    }
-
     @Override
-    public Receive<Blinds.BlindsCommand> createReceive() {
+    public Receive<BlindsCommand> createReceive() {
         return newReceiveBuilder()
-
-                //TODO onMESSAGE
+                .onMessage(PowerBlinds.class, this::onPowerBlinds)
                 .onSignal(PostStop.class, signal -> onPostStop())
                 .build();
-
     }
-    private Blinds onPostStop(){
-        getContext().getLog().info("post stop");
+
+    private Behavior<BlindsCommand> onPowerBlinds(PowerBlinds command) {
+        this.isOpen = command.value;
+        getContext().getLog().info("Blinds are now {}", isOpen ? "OPEN" : "CLOSED");
         return this;
     }
 
+    private Blinds onPostStop() {
+        getContext().getLog().info("Blinds stopped");
+        return this;
+    }
 }

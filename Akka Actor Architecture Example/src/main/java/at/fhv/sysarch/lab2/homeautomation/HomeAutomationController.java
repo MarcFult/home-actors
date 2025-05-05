@@ -8,7 +8,9 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import at.fhv.sysarch.lab2.homeautomation.devices.AirCondition;
+import at.fhv.sysarch.lab2.homeautomation.devices.Blinds;
 import at.fhv.sysarch.lab2.homeautomation.devices.TemperatureSensor;
+import at.fhv.sysarch.lab2.homeautomation.messages.UserInput;
 import at.fhv.sysarch.lab2.homeautomation.ui.UI;
 
 import java.util.UUID;
@@ -24,7 +26,8 @@ public class HomeAutomationController extends AbstractBehavior<Void>{
         // TODO: consider guardians and hierarchies. Who should create and communicate with which Actors?
         ActorRef<AirCondition.AirConditionCommand> airCondition = getContext().spawn(AirCondition.create(UUID.randomUUID().toString()), "AirCondition");
         ActorRef<TemperatureSensor.TemperatureCommand> tempSensor = getContext().spawn(TemperatureSensor.create(airCondition), "temperatureSensor");
-        ActorRef<Void> ui = getContext().spawn(UI.create(tempSensor, airCondition), "UI");
+        ActorRef<Blinds.BlindsCommand> blinds = getContext().spawn(Blinds.create(UUID.randomUUID().toString()), "Blinds");
+        ActorRef<UserInput> ui = getContext().spawn(UI.create(tempSensor, airCondition, blinds), "UI");
         getContext().getLog().info("HomeAutomation Application started");
     }
 
